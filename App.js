@@ -19,37 +19,52 @@ let songs = [];
  */
 async function getsong(folder) {
   curentfolder = folder;
-  const response = await fetch(`https://api.github.com/KunjGarala/Spotify/${folder}`); // Replace with your actual API URL
-  const data = await response.json(); // Assuming the API returns JSON with song info
-  
-  songs = data.songs; // Expecting the API to return an array of song names
-  
+  const a = await fetch(`https://kunjgarala.github.io/Spotify/${folder}/`);
+  const response = await a.text();
+  const div = document.createElement("div");
+  div.innerHTML = response;
+  let as = div.getElementsByTagName("a");
+  let song = [];
+  for (let index = 0; index < as.length; index++) {
+    const element = as[index];
+    if (element.href.endsWith(".mp3")) {
+      song.push(element.href.split(`/${folder}/`)[1]);
+    }
+  }
+
+  console.log("song" + songs);
+  songs = song;
+
   let songUl = document
     .querySelector(".songlist")
     .getElementsByTagName("ul")[0];
   songUl.innerHTML = "";
-  for (const song of songs) {
-    songUl.innerHTML += `
-      <li>
-        <div class="album stylesong">
-          <div class="set-album">
-            <div class="album-img">
-              <img src="${data.baseUrl}/images/${song.replaceAll(".mp3", ".jpeg")}">
-            </div>
-            <div class="album-text">
-              <p class="album-title">${song.replaceAll(".mp3", "")}</p>
-              <p class="album-info">Rasraj Ji Maharaj</p>
-            </div>
-          </div>
-          <div class="play-album">
-            <img src="${data.baseUrl}/icon/player_icon3.png" alt="">
-          </div>
-        </div>
-      </li>`;
+  for (const element of songs) {
+    songUl.innerHTML =
+      songUl.innerHTML +
+      `<li><div class="album stylesong">
+    <div class="set-album">
+    <div class="album-img">
+    <img src="https://kunjgarala.github.io/Spotify/icon/${element
+      .replaceAll("%20", " ")
+      .replaceAll(".mp3", ".jpeg")}">
+    </div>
+    <div class="album-text" style="">
+    <p class="album-title">${element
+      .replaceAll("%20", " ")
+      .replaceAll(".mp3", "")}</p>
+    <p class="album-info">Rasraj Ji Maharaj</p>
+    </div>
+    </div>
+    <div class="play-album">
+    <img src="https://kunjgarala.github.io/Spotify/icon/player_icon3.png" alt="Play">
+    </div>
+    </div></li>`;
   }
 
   attachClickListeners();
 }
+
 
 /**
  * Attach click listeners to the song items for playing.
