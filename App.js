@@ -1,248 +1,418 @@
-<!DOCTYPE html>
-<html lang="en">
+// console.log("HI Kunj");
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="icon" href="icon/logo.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <title>Spotify - Web Player: Music for everyone</title>
-</head>
+let currentSong = new Audio();
+let playButton = document.querySelector("#play-song");
+let playsong = document.querySelector(".music-player .album-title");
+let playsongimg = document.querySelector(".music-player .album-img img");
+let libplaybtn = document.querySelector(".play-album img");
+let toteltime = document.querySelector(".totel-time");
+let curenttime = document.querySelector(".curent-time");
+let cardContainer = document.querySelector(".cards-container-Tranding");
+let cardContainerres = document.querySelector(".cards-container-res");
+let volumeicn = document.querySelector(".volumeicn");
+let songUl = document.querySelector(".songlist").getElementsByTagName("ul")[0];
+let curentfolder;
+let cnt = false;
 
-<body>
-    <div class="main">
-        <div class="sidebar">
-            <div class="navx">
-                <div class="nevop" style="opacity: 1;">
-                    <div>
-                        <i class="fa-solid fa-house"></i>
-                        <a href="#">Home</a>
-                    </div>
+let songs = [];
+async function getsong(folder) {
+  curentfolder = folder;
+  playButton.src = "icon/player_icon3.png";
+  const a = await fetch(`http://127.0.0.1:5500/${folder}/`);
+  const response = await a.text();
+  const div = document.createElement("div");
+  div.innerHTML = response;
+  let as = div.getElementsByTagName("a");
+  let song = [];
+  for (let index = 0; index < as.length; index++) {
+    const element = as[index];
+    if (element.href.endsWith(".mp3")) {
+      song.push(element.href.split(`/${folder}/`)[1]);
+    }
+  }
 
-                    <img src="icon/close.svg" alt="" class="sideclose">
-                </div>
+  // console.log("song" + songs);
+  songs = song;
 
-                <div class="nevop">
-                    <div>
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <a href="#">Search</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="library">
-                <div class="opction">
-                    <div class="liop nevop">
-                        <img src="icon/library_icon.png" alt="">
-                        <a href="#">Your library</a>
-                    </div>
-                    <div class="icn">
-                        <i class="fa-solid fa-plus"></i>
-                        <i class="fa-solid fa-arrow-right"></i>
-                        <img src="icon/backareo.svg" class="backareo" alt="">
-                    </div>
-                </div>
-
-                <!-- songs in library -->
-                <div class="songlist">
-                    <ul>
-                        <!-- <li>
-                            <div class="album stylesong">
-                                <div class="set-album">
-                                    <div class="album-img">
-                                        <img src="/spotyfy/icon/Bajrang-Baan-Lofi-Hindi.jpg">
-                                    </div>
-                                    <div class="album-text" style="">
-                                        <p class="album-title">Bajrang Baan-Lofi</p>
-                                        <p class="album-info">Rasraj Ji Maharaj</p>
-                                    </div>
-                                </div>
-                                <div class="play-album">
-                                    <img src="/spotyfy//icon/player_icon3.png" alt="">
-                                </div>
-                            </div>
-                        </li> -->
-                    </ul>
-                </div>
-
-                <!-- <div class="lib-boxis">
-                    <div class="box">
-                        <div class="boxp1" style="line-height: 1rem;">Create your first playlist</div>
-                        <div class="boxp2">It's easy, we'll help you</div>
-                        <button class="badge">Create playlist</button>
-                    </div>
-                </div>
-                <div class="lib-boxis">
-                    <div class="box">
-                        <div class="boxp1" style="line-height: 1rem;">Let's find some podcasts to follow</div>
-                        <div class="boxp2">We'll keep you updated on new episodes</div>
-                        <button class="badge">Browse podcasts</button>
-                    </div>
-                </div> -->
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div class="sticky-nav">
-                <div class="sticky-nav-icn">
-                    <img src="icon/hamburger.svg" class="hamburger" alt="">
-                    <img src="icon/backward_icon.png" alt="backward_icon">
-                    <img src="icon/forward_icon.png" alt="forward_icon" class="hide">
-                </div>
-                <div class="sticky-nav-download">
-                    <button class="badge nav-itm hide">Explore Premium</button>
-                    <button class="badge nav-itm install-app" style="margin-left: 10px;"><i
-                            class="fa-regular fa-circle-down"></i> Install
-                        App</button>
-                    <i class="fa-regular fa-user nav-itm"></i>
-                </div>
-
-            </div>
-            <div class="cards">
-                <h2>Recently Played</h2>
-                <div class="cards-container cards-container-res">
-                    <!-- <div data-folder="top" class="card">
-                        <img src="icon/Bajrang-Baan-Lofi-Hindi.jpg" alt="top50" class="card-img">
-                        <img src="icon/playicanback.svg" class="play-button" alt=""
-                            style="border-radius: 20px; width: 20px; right: 6%;">
-                        <img src="icon/play-button.svg" class="play-button" alt="">
-                        <p class="card-title">Bajrang Baan-Lofi</p>
-                        <p class="card-info">Rasraj Ji Maharaj</p>
-                    </div> -->
-                </div>
-
-                <h2>Tranding now near you</h2>
-                <div class="cards-container">
-                    <div data-folder="lol" class="card">
-                        <img src="icon/card1img.jpeg" alt="top50" class="card-img">
-                        <img src="icon/playicanback.svg" class="play-button" alt=""
-                            style="border-radius: 20px; width: 20px; right: 6%;">
-                        <img src="icon/play-button.svg" class="play-button" alt="">
-                        <p class="card-title">Top 50-Global</p>
-                        <p class="card-info">Your Daily Updates of the most played tracks...</p>
-                    </div>
-                    <div class="card">
-                        <img src="icon/card2img.jpeg" alt="top50" class="card-img">
-                        <img src="icon/playicanback.svg" class="play-button" alt=""
-                            style="border-radius: 20px; width: 20px; right: 6%;">
-                        <img src="icon/play-button.svg" class="play-button" alt="">
-                        <p class="card-title">Mahiye Jinna Sohna</p>
-                        <p class="card-info">Darshan Raval</p>
-                    </div>
-                    <div class="card">
-                        <img src="icon/card3img.jpeg" alt="top50" class="card-img">
-                        <img src="icon/playicanback.svg" class="play-button" alt=""
-                            style="border-radius: 20px; width: 20px; right: 6%;">
-                        <img src="icon/play-button.svg" class="play-button" alt="">
-                        <p class="card-title">Mere Paas Tum Raho</p>
-                        <p class="card-info">Rahat Fateh Ali Khan.</p>
-                    </div>
-                    <div class="card">
-                        <img src="icon/card4img.jpeg" alt="top50" class="card-img">
-                        <img src="icon/playicanback.svg" class="play-button" alt=""
-                            style="border-radius: 20px; width: 20px; right: 6%;">
-                        <img src="icon/play-button.svg" class="play-button" alt="">
-                        <p class="card-title">Ready Chal (From "Leo (Hindi)")</p>
-                        <p class="card-info">Anirudh Ravichander.</p>
-                    </div>
-                </div>
-
-                <h2>Featured Charts</h2>
-                <div class="cards-container">
-                    <div class="card">
-                        <img src="icon/card5img.jpeg" alt="top50" class="card-img">
-                        <img src="icon/playicanback.svg" class="play-button" alt=""
-                            style="border-radius: 20px; width: 20px; right: 6%;">
-                        <img src="icon/play-button.svg" class="play-button" alt="">
-                        <p class="card-title">Top Songs - Global</p>
-                        <p class="card-info">Your weekly update of the most played tracks right now - Global.</p>
-                    </div>
-                    <div class="card">
-                        <img src="icon/card6img.jpeg" alt="top50" class="card-img">
-                        <img src="icon/playicanback.svg" class="play-button" alt=""
-                            style="border-radius: 20px; width: 20px; right: 6%;">
-                        <img src="icon/play-button.svg" class="play-button" alt="">
-                        <p class="card-title">Top Songs - India</p>
-                        <p class="card-info">Your weekly update of the most played tracks right now - India.</p>
-                    </div>
-                    <div class="card">
-                        <img src="icon/card1img.jpeg" alt="top50" class="card-img">
-                        <img src="icon/playicanback.svg" class="play-button" alt=""
-                            style="border-radius: 20px; width: 20px; right: 6%;">
-                        <img src="icon/play-button.svg" class="play-button" alt="">
-                        <p class="card-title">Top 50-Global</p>
-                        <p class="card-info">Your Daily Updates of the most played tracks..</p>
-                    </div>
-                </div>
-
-                <div class="footer">
-                    <div class="iner-footer"></div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="music-player">
-            <div class="album">
-                <div class="album-img">
-                    <img src="icon/Bajrang-Baan-Lofi-Hindi.jpg">
-                </div>
-                <div class="album-text album-textrespo">
-                    <p class="album-title">Bajrang Baan-Lofi</p>
-                    <p class="album-info">Rasraj Ji Maharaj</p>
-                </div>
-            </div>
-            <div class="player">
-                <div class="player-controls">
-                    <img src="icon/player_icon1.png" class="player-controls-icn">
-                    <img src="icon/player_icon2.png" id="prev-song" class="player-controls-icn">
-                    <img src="icon/player_icon3.png" id="play-song" class="player-controls-icn"
-                        style="opacity: 1; width: 2rem;">
-                    <img src="icon/player_icon4.png" id="Next-song" class="player-controls-icn">
-                    <img src="icon/player_icon5.png" class="player-controls-icn">
-                </div>
-                <div class="playbec-bar">
-                    <span class="curent-time" style="height: 16px;width: 50px;"></span>
-                    <input id="seekbar" type="range" min="0" max="10000" value="0" class="progress-bar" step="1">
-
-                    <span class="totel-time" style="height: 16px;width: 50px;"></span>
-                </div>
-            </div>
-
-            <div class="control">
-                <div class="control-icn-cnt">
-                    <img src="icon/mic.png" class="mic-icn control-icn hide">
-                    <svg class="control-icn hide" xmlns="http://www.w3.org/2000/svg" height="24px"
-                        viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
-                        <path
-                            d="M120-320v-80h320v80H120Zm0-160v-80h480v80H120Zm0-160v-80h480v80H120Zm520 520v-320l240 160-240 160Z" />
-                    </svg>
-                    <svg class="control-icn hide" xmlns="http://www.w3.org/2000/svg" height="24px"
-                        viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
-                        <path
-                            d="M400-280h360v-560H400v560Zm0 80q-33 0-56.5-23.5T320-280v-560q0-33 23.5-56.5T400-920h360q33 0 56.5 23.5T840-840v560q0 33-23.5 56.5T760-200H400Zm180-460q25 0 42.5-17.5T640-720q0-25-17.5-42.5T580-780q-25 0-42.5 17.5T520-720q0 25 17.5 42.5T580-660Zm0 340q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41Zm0-80q-25 0-42.5-17.5T520-460q0-25 17.5-42.5T580-520q25 0 42.5 17.5T640-460q0 25-17.5 42.5T580-400Zm60 360H240q-33 0-56.5-23.5T160-120v-640h80v640h400v80ZM400-840v560-560Z" />
-                    </svg>
-                    
-                    <img src="icon/volume.svg" class="control-icn volumeicn" alt="">
-                    <div class="control-icn-cnt-rang">
-                        <input type="range" min="0" max="100" class="progress-bar-control volume" value="0" step="1">
-                    </div>
-
-                </div>
-            </div>
-        </div>
+  
+  songUl.innerHTML = "";
+  for (const element of songs) {
+    songUl.innerHTML =
+      songUl.innerHTML +
+      `<li><div class="album stylesong">
+    <div class="set-album">
+    <div class="album-img">
+    <img src="icon/${element
+      .replaceAll("%20", " ")
+      .replaceAll(".mp3", ".jpeg")}">
     </div>
+    <div class="album-text" style="">
+    <p class="album-title">${element
+      .replaceAll("%20", " ")
+      .replaceAll(".mp3", "")}</p>
+    <p class="album-info">Rasraj Ji Maharaj</p>
+    </div>
+    </div>
+    <div class="play-album">
+    <img src="icon/player_icon3.png" alt="">
+    </div>
+    </div></li>`;
+  }
 
-</body>
+  attachClickListeners();
+  managePlayIcons(0, songUl.firstChild);
+}
+let previndex;
 
-<script src="App.js"></script>
-<!-- <img src="/song/top/" alt=""> -->
 
-</html>
+
+function managePlayIcons(index, e) {
+  const playicn = e.querySelector(".play-album img");
+
+  
+  if (typeof previndex !== "undefined") {
+    const prevItem = document.querySelector(
+      `.songlist li:nth-child(${previndex + 1})`
+    );
+    const prevPlayIcon = prevItem.querySelector(".play-album img");
+    prevPlayIcon.src = "icon/player_icon3.png"; // Reset previous play icon
+  }
+  playicn.src = "icon/spoti.svg"; // Change the play icon for the current item
+
+  previndex = index;
+  
+}
+
+// Usage example:
+function attachClickListeners() {
+  const listItems = document.querySelectorAll(".songlist li");
+
+  listItems.forEach((e, index) => {
+    e.addEventListener("click", () => {
+      const songTitle = e.querySelector(".album-title").innerHTML.trim();
+      // Call your PlayMusic function here with the songTitle
+      // ...
+
+      managePlayIcons(index, e); // Call our custom function
+      PlayMusic(songTitle);
+    });
+  });
+}
+
+// function attachClickListeners() {
+//   const listItems = document.querySelectorAll(".songlist li");
+  
+//   listItems.forEach((e, index) => {
+//     e.addEventListener("click", () => {
+//       const songTitle = e.querySelector(".album-title").innerHTML.trim();
+//       // console.log(songTitle);
+      
+
+//       const playicn = e.querySelector(".play-album img");
+//       if (typeof previndex !== "undefined") {
+//         const prevItem = document.querySelector(
+//           `.songlist li:nth-child(${previndex + 1})`
+//         );
+//         const prevPlayIcon = prevItem.querySelector(".play-album img");
+//         prevPlayIcon.src = "icon/player_icon3.png"; // Reset previous play icon
+//       }
+//       playicn.src = "icon/spoti.svg"; // Change the play icon for the current item
+//       previndex = index;
+//       PlayMusic(songTitle); // Function to play the music
+
+//     });
+//   });
+// }
+
+let PlayMusic = (obj, paush = false, call = true) => {
+  if (call) {
+    currentSong.src = `${curentfolder}/` + obj + ".mp3";
+  } else {
+    currentSong.src = `${curentfolder}/` + obj;
+  }
+
+  if (!paush) {
+    currentSong.play();
+    // currentSong.
+    playButton.src = "icon/PAUSH.svg";
+  }
+  playsongimg.src = `icon/${obj
+    .replaceAll("%20", " ")
+    .replaceAll(".mp3", "")}.jpeg`;
+  playsong.innerHTML = obj.replaceAll("%20", " ").replaceAll(".mp3", "");
+  // console.log(obj);
+  // cnt = true;
+};
+
+function musiciconchange(index){
+  let temp = document.querySelectorAll(".songlist li");
+  let templi =  Array.from(temp);
+  for (let indext = 0; indext < templi.length; indext++) {
+  const element = templi[indext];
+  if (indext ===index ) {
+    managePlayIcons(index, element)
+  }
+}
+}
+
+function secTomin(sec) {
+  if (isNaN(sec) || sec < 0) {
+    return "invelid";
+  }
+
+  const min = Math.floor(sec / 60);
+  const playsec = Math.floor(sec % 60);
+  const formetmin = String(min).padStart(2, "0");
+  const formetsec = String(playsec).padStart(2, "0");
+  return `${formetmin}:${formetsec}`;
+}
+let resentload = true;
+
+async function displayAlbums() {
+  const a = await fetch(`http://127.0.0.1:5500/song/`);
+  const response = await a.text();
+  const div = document.createElement("div");
+  div.innerHTML = response;
+  let allA = div.getElementsByTagName("a");
+  let array = Array.from(allA);
+  for (let index = 0; index < array.length; index++) {
+    const e = array[index];
+    if (e.href.includes("song/")) {
+      let folder = e.href.split("song/")[1];
+      const a = await fetch(`http://127.0.0.1:5500/song/${folder}/detail.json`);
+      const response = await a.json();
+      cardContainer.innerHTML =
+        cardContainer.innerHTML +
+        ` <div data-folder="${folder}" class="card">
+                          <img src="song/${folder}/cover.jpeg" alt="top50" class="card-img">
+                          <img src="icon/playicanback.svg" class="play-button" alt="" style="border-radius: 20px; width: 20px; right: 6%;">
+                          <img src="icon/play-button.svg" class="play-button" alt="">
+                          <p class="card-title">${response.title}</p>
+                          <p class="card-info">${response.description}</p>
+                      </div>`;
+      // console.log(response);
+
+      if (resentload) {
+        cardContainerres.innerHTML =
+          cardContainerres.innerHTML +
+          ` <div data-folder="${folder}" class="card">
+                          <img src="song/${folder}/cover.jpeg" alt="top50" class="card-img">
+                          <img src="icon/playicanback.svg" class="play-button" alt="" style="border-radius: 20px; width: 20px; right: 6%;">
+                          <img src="icon/play-button.svg" class="play-button" alt="">
+                          <p class="card-title">${response.title}</p>
+                          <p class="card-info">${response.description}</p>
+                      </div>`;
+
+        resentload = false;
+      }
+    }
+
+    //lode play list
+    let card = document.querySelectorAll(".card");
+    cardContainerres.addEventListener("click", async (event) => {
+      const clickedCard = event.target.closest(".card");
+      
+      if (clickedCard) {
+        const folder = clickedCard.getAttribute("data-folder");
+        // console.log(folder);
+
+        await getsong(`song/${folder}`);
+
+        PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
+      }
+    });
+
+    Array.from(card).forEach((e) => {
+      e.addEventListener("click", async (item) => {
+        let folder = e.getAttribute("data-folder");
+        // console.log(folder);
+        // console.log(e);
+        let x = e.cloneNode(true);
+        // console.log(x);
+        let children = cardContainerres.children;
+        let exist = true;
+        Array.from(children).forEach((element) => {
+          // console.log(element.getAttribute("data-folder"));
+
+          if (element.getAttribute("data-folder") === folder) {
+            exist = false;
+          }
+        });
+        if (exist) {
+          cardContainerres.append(x);
+        }
+
+        await getsong(`song/${folder}`);
+
+        PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
+      });
+    });
+  }
+
+  // console.log(div);
+}
+
+async function main() {
+  await getsong(`song/lol`);
+  PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
+
+  const x = document.querySelector("#seekbar");
+  //display All albums
+  displayAlbums();
+  playButton.addEventListener("click", () => {
+    if (currentSong.paused) {
+      currentSong.play();
+      // console.log("play push");
+      playButton.src = "icon/PAUSH.svg";
+    } else {
+      currentSong.pause();
+      playButton.src = "icon/player_icon3.png";
+    }
+  });
+
+
+
+  //time update;
+
+  currentSong.addEventListener("timeupdate", () => {
+    const parsedDuration = parseInt(currentSong.duration);
+    if (Number.isNaN(parsedDuration)) {
+      // currentSong.pause();
+      // playButton.src = "icon/player_icon3.png";
+      toteltime.innerHTML = ``;
+      curenttime.innerHTML = ``;
+      x.value = 0;
+    } else {
+      toteltime.innerHTML = secTomin(currentSong.duration);
+      curenttime.innerHTML = secTomin(currentSong.currentTime);
+      x.value = (currentSong.currentTime / currentSong.duration) * 10000;
+    }
+  });
+
+  x.addEventListener("click", (e) => {
+    const temp = e.target.value / 100;
+    currentSong.currentTime = (currentSong.duration * temp) / 100;
+  });
+
+  currentSong.addEventListener("timeupdate", rangeChange);
+
+  function rangeChange() {
+    const value = rangeInput.value;
+    const max = rangeInput.max;
+    const progress = (value / max) * 100;
+    rangeInput.style.setProperty("--progress", `${progress}%`);
+  }
+
+  const rangeInput = document.querySelector(".progress-bar");
+  rangeInput.addEventListener("input", rangeChange);
+
+  //volume range update and volume
+  const volum = document.querySelector(".progress-bar-control");
+
+  // volum.addEventListener("input", (e) => {
+  //   // let value =100;
+  //   let value = volum.value;
+  //   currentSong.volume = parseInt(e.target.value) / 100;
+  //   const max = volum.max;
+  //   const progress = (value / max) * 100;
+  //   volum.style.setProperty("--progress", `${progress}%`);
+  // });
+
+  // Set the initial value of the volume to 100
+  volum.value = 100;
+  currentSong.volume = 1; // Max volume (100%)
+
+  volum.addEventListener("input", (e) => {
+    // Get the current value of the volume slider
+    let value = e.target.value;
+
+    // Set the current song's volume based on the slider's value
+    currentSong.volume = parseInt(value) / 100;
+
+    // Get the max value of the volume slider
+    const max = e.target.max;
+
+    // Calculate the progress in percentage
+    const progress = (value / max) * 100;
+
+    // Update the CSS variable for the progress bar to reflect the volume
+    volum.style.setProperty("--progress", `${progress}%`);
+  });
+
+  function volumeProgtess() {
+    const initialProgress = (volum.value / volum.max) * 100;
+    volum.style.setProperty("--progress", `${initialProgress}%`);
+  }
+  volumeProgtess();
+
+  //sidebar update
+  let hamburger = document.querySelector(".hamburger");
+  hamburger.addEventListener("click", () => {
+    document.querySelector(".sidebar").style.left = "0";
+  });
+
+  document.querySelector(".sideclose").addEventListener("click", () => {
+    document.querySelector(".sidebar").style.left = "-115%";
+  });
+
+  let backareo = document.querySelector(".backareo");
+  let areo = document.querySelector(".fa-arrow-right");
+  areo.addEventListener("click", () => {
+    document.querySelector(".sidebar").style.width = "50%";
+    areo.style.display = "none";
+    backareo.style.display = "inline";
+  });
+  backareo.addEventListener("click", () => {
+    document.querySelector(".sidebar").style.width = "340px";
+    backareo.style.display = "none";
+    areo.style.display = "inline";
+  });
+
+  //previous and next
+  let prevsong = document.querySelector("#prev-song");
+  let nextsong = document.querySelector("#Next-song");
+
+  prevsong.addEventListener("click", () => {
+    currentSong.pause();
+    // console.log(songs);
+
+    let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0]);
+    musiciconchange(index-1)
+    if (index > 0) {
+      PlayMusic(songs[index - 1], false, false);
+    }
+
+  
+
+  });
+  nextsong.addEventListener("click", () => {
+    currentSong.pause();
+    let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0]);
+    musiciconchange(index+1)
+    if (index + 1 < songs.length) {
+      PlayMusic(songs[index + 1], false, false);
+    }
+  });
+
+  //click and muite
+  volumeicn.addEventListener("click", (e) => {
+    // console.log();
+    if (e.target.src.includes("volume.svg")) {
+      e.target.src = e.target.src.replace("volume.svg", "mute.svg");
+      currentSong.volume = 0;
+      volum.value = 0;
+      volumeProgtess();
+    } else {
+      e.target.src = e.target.src.replace("mute.svg", "volume.svg");
+      currentSong.volume = 0.1;
+      volum.value = 10;
+      volumeProgtess();
+    }
+  });
+  
+  
+  
+
+}
+
+main();
