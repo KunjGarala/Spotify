@@ -188,9 +188,17 @@ a {
 }
 
 .install-app {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: black;
-    color: white;
+    font-weight: bold;
 }
+.install-app pre {
+    color: #0a66c2;
+}
+
 
 .hamburger{
     display: none;
@@ -202,8 +210,18 @@ a {
     display: none;
 }
 
+.stylesong .album-img{
+    align-self: center;
+}
 
-@media(max-width:1085px) {
+.kunj-garala{
+    border-radius: 50%;
+    width: 35px;
+    border: 2px solid #00a900;
+}
+
+
+@media(max-width:1153px) {
     .hide {
         display: none;
         transition: all 3s ease-in;
@@ -450,6 +468,9 @@ a {
     padding: 0.2rem;
     border-radius: 0.5rem;
 }
+.music-player .album-title{
+    width: 100%;
+}
 
 .album-info {
     font-size: 0.75rem;
@@ -463,6 +484,7 @@ a {
 
 .album-title {
     font-weight: 600;
+    width: 175px;
 }
 
 
