@@ -18,7 +18,7 @@ let songs = [];
 async function getsong(folder) {
   curentfolder = folder;
   playButton.src = "icon/player_icon3.png";
-  const a = await fetch(`http://127.0.0.1:5500/${folder}/`);
+  const a = await fetch(`/${folder}/`);
   const response = await a.text();
   const div = document.createElement("div");
   div.innerHTML = response;
@@ -169,7 +169,7 @@ function secTomin(sec) {
 let resentload = true;
 
 async function displayAlbums() {
-  const a = await fetch(`http://127.0.0.1:5500/song/`);
+  const a = await fetch(`/song/`);
   const response = await a.text();
   const div = document.createElement("div");
   div.innerHTML = response;
@@ -179,7 +179,7 @@ async function displayAlbums() {
     const e = array[index];
     if (e.href.includes("song/")) {
       let folder = e.href.split("song/")[1];
-      const a = await fetch(`http://127.0.0.1:5500/song/${folder}/detail.json`);
+      const a = await fetch(`/song/${folder}/detail.json`);
       const response = await a.json();
       cardContainer.innerHTML =
         cardContainer.innerHTML +
