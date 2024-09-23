@@ -265,7 +265,7 @@ async function main() {
   });
 
 
-
+  
   //time update;
 
   currentSong.addEventListener("timeupdate", () => {
@@ -283,18 +283,11 @@ async function main() {
     }
   });
 
-  X.addEventListener("input", (e) => {
-  const temp = e.target.value/100;  // Get the value of the range (0-100)
-  currentSong.currentTime = (currentSong.duration * temp) / 100;
-});
-
-// To update the seek bar as the song plays:
-currentSong.addEventListener("timeupdate", () => {
-  if (!isNaN(currentSong.duration)) {
-    const progress = (currentSong.currentTime / currentSong.duration) * 100;
-    seekBar.value = progress;  // Update the seek bar position
-  }
-});
+  x.addEventListener("click", (e) => {
+    const temp = e.target.value / 100;
+    currentSong.currentTime = (currentSong.duration * temp) / 100;
+    currentSong.addEventListener("timeupdate", rangeChange);
+  });
 
   currentSong.addEventListener("timeupdate", rangeChange);
 
