@@ -18,8 +18,10 @@ let songs = [];
 async function getsong(folder) {
   curentfolder = folder;
   playButton.src = "icon/player_icon3.png";
-  const a = await fetch(`/${folder}/`);
+  const a = await fetch(`https://jade-zuccutto-ac1518.netlify.app
+/${folder}/`);
   const response = await a.text();
+
   const div = document.createElement("div");
   div.innerHTML = response;
   let as = div.getElementsByTagName("a");
@@ -169,7 +171,8 @@ function secTomin(sec) {
 let resentload = true;
 
 async function displayAlbums() {
-  const a = await fetch(`/song/`);
+  const a = await fetch(`https://jade-zuccutto-ac1518.netlify.app
+/song/`);
   const response = await a.text();
   const div = document.createElement("div");
   div.innerHTML = response;
@@ -179,7 +182,8 @@ async function displayAlbums() {
     const e = array[index];
     if (e.href.includes("song/")) {
       let folder = e.href.split("song/")[1];
-      const a = await fetch(`/song/${folder}/detail.json`);
+      const a = await fetch(`https://jade-zuccutto-ac1518.netlify.app
+/song/${folder}/detail.json`);
       const response = await a.json();
       cardContainer.innerHTML =
         cardContainer.innerHTML +
@@ -253,6 +257,7 @@ async function displayAlbums() {
 }
 
 async function main() {
+  
   await getsong(`song/lol`);
   PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
 
