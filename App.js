@@ -286,7 +286,6 @@ async function main() {
   x.addEventListener("click", (e) => {
     const temp = e.target.value / 100;
     currentSong.currentTime = (currentSong.duration * temp) / 100;
-    currentSong.addEventListener("timeupdate", rangeChange);
   });
 
   currentSong.addEventListener("timeupdate", rangeChange);
