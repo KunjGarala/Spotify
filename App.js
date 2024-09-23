@@ -363,29 +363,43 @@ async function main() {
 
   //previous and next
   let prevsong = document.querySelector("#prev-song");
-  let nextsong = document.querySelector("#Next-song");
+let nextsong = document.querySelector("#Next-song");
 
-  prevsong.addEventListener("click", () => {
-    currentSong.pause();
-    // console.log(songs);
+// Handle previous song
+prevsong.addEventListener("click", () => {
+  currentSong.pause();
 
-    let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0]);
-    musiciconchange(index-1)
-    if (index > 0) {
-      PlayMusic(songs[index - 1], false, false);
-    }
+  // Get the current song filename from the source
+  let currentSongName = decodeURIComponent(currentSong.src.split("/").slice(-1)[0]);
+  let index = songs.indexOf(currentSongName);
 
-  
+  // Move to the previous song if available
+  if (index > 0) {
+    musiciconchange(index - 1);  // Update icon
+    PlayMusic(songs[index - 1], false, false);  // Play previous song
+  } else {
+    console.log("No previous song.");
+  }
+});
 
-  });
-  nextsong.addEventListener("click", () => {
-    currentSong.pause();
-    let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0]);
-    musiciconchange(index+1)
-    if (index + 1 < songs.length) {
-      PlayMusic(songs[index + 1], false, false);
-    }
-  });
+// Handle next song
+nextsong.addEventListener("click", () => {
+  currentSong.pause();
+
+  // Get the current song filename from the source
+  let currentSongName = decodeURIComponent(currentSong.src.split("/").slice(-1)[0]);
+  let index = songs.indexOf(currentSongName);
+
+  // Move to the next song if available
+  if (index + 1 < songs.length) {
+    musiciconchange(index + 1);  // Update icon
+    PlayMusic(songs[index + 1], false, false);  // Play next song
+  } else {
+    console.log("No next song.");
+  }
+});
+
+
 
   //click and muite
   volumeicn.addEventListener("click", (e) => {
@@ -402,9 +416,6 @@ async function main() {
       volumeProgtess();
     }
   });
-  
-  
-  
 
 }
 
