@@ -21,9 +21,9 @@ async function getsong(folder) {
 
   // Fetch repository contents from the GitHub API
   const apiURL = `https://api.github.com/repos/KunjGarala/Spotify/contents/${folder}`;
-  const a = await fetch(apiURL);
-  const response = await a.json();
   
+  const a = await fetch(apiURL);
+  const response = await a.json(); 
   let song = [];
   for (let index = 0; index < response.length; index++) {
     const element = response[index];
@@ -235,7 +235,8 @@ async function displayAlbums() {
         });
 
         if (exist) {
-          cardContainerres.append(x);
+          cardContainerres.insertBefore(x, cardContainerres.firstChild);
+
         }
 
         await getsong(`song/${folder}`);
