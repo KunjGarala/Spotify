@@ -18,24 +18,21 @@ let songs = [];
 async function getsong(folder) {
   curentfolder = folder;
   playButton.src = "icon/player_icon3.png";
-  const a = await fetch(`https://jade-zuccutto-ac1518.netlify.app
-/${folder}/`);
-  const response = await a.text();
 
-  const div = document.createElement("div");
-  div.innerHTML = response;
-  let as = div.getElementsByTagName("a");
+  // Fetch repository contents from the GitHub API
+  const apiURL = `https://api.github.com/repos/KunjGarala/Spotify/contents/${folder}`;
+  const a = await fetch(apiURL);
+  const response = await a.json();
+  
   let song = [];
-  for (let index = 0; index < as.length; index++) {
-    const element = as[index];
-    if (element.href.endsWith(".mp3")) {
-      song.push(element.href.split(`/${folder}/`)[1]);
+  for (let index = 0; index < response.length; index++) {
+    const element = response[index];
+    if (element.name.endsWith(".mp3")) {
+      song.push(element.name);
     }
   }
 
-  // console.log("song" + songs);
   songs = song;
-
   
   songUl.innerHTML = "";
   for (const element of songs) {
@@ -66,12 +63,9 @@ async function getsong(folder) {
 }
 let previndex;
 
-
-
 function managePlayIcons(index, e) {
   const playicn = e.querySelector(".play-album img");
 
-  
   if (typeof previndex !== "undefined") {
     const prevItem = document.querySelector(
       `.songlist li:nth-child(${previndex + 1})`
@@ -171,57 +165,58 @@ function secTomin(sec) {
 let resentload = true;
 
 async function displayAlbums() {
-  const a = await fetch(`https://jade-zuccutto-ac1518.netlify.app
-/song/`);
-  const response = await a.text();
-  const div = document.createElement("div");
-  div.innerHTML = response;
-  let allA = div.getElementsByTagName("a");
-  let array = Array.from(allA);
-  for (let index = 0; index < array.length; index++) {
-    const e = array[index];
-    if (e.href.includes("song/")) {
-      let folder = e.href.split("song/")[1];
-      const a = await fetch(`https://jade-zuccutto-ac1518.netlify.app
-/song/${folder}/detail.json`);
-      const response = await a.json();
-      cardContainer.innerHTML =
-        cardContainer.innerHTML +
-        ` <div data-folder="${folder}" class="card">
-                          <img src="song/${folder}/cover.jpeg" alt="top50" class="card-img">
-                          <img src="icon/playicanback.svg" class="play-button" alt="" style="border-radius: 20px; width: 20px; right: 6%;">
-                          <img src="icon/play-button.svg" class="play-button" alt="">
-                          <p class="card-title">${response.title}</p>
-                          <p class="card-info">${response.description}</p>
-                      </div>`;
-      // console.log(response);
+  // Fetch the contents of the 'song' folder from GitHub API
+  const apiURL = `https://api.github.com/repos/KunjGarala/Spotify/contents/song`;
+  const a = await fetch(apiURL);
+  const response = await a.json();
+  
+  let allA = Array.from(response); // List of files and folders in the 'song' directory
+  for (let index = 0; index < allA.length; index++) {
+    const e = allA[index];
+    if (e.type === "dir") { // Check if it is a folder
+      let folder = e.name;
+
+      // Fetch the 'detail.json' file inside each folder
+      const detailURL = `https://api.github.com/repos/KunjGarala/Spotify/contents/song/${folder}/detail.json`;
+      const detailResponse = await fetch(detailURL);
+      const detailJSON = await detailResponse.json();
+
+      // The content of the detail.json is base64-encoded, so we decode it
+      const jsonString = atob(detailJSON.content);
+      const parsedDetail = JSON.parse(jsonString);
+
+      // Add the card with album details
+      cardContainer.innerHTML += `
+        <div data-folder="${folder}" class="card">
+          <img src="https://raw.githubusercontent.com/KunjGarala/Spotify/main/song/${folder}/cover.jpeg" alt="cover" class="card-img">
+          <img src="icon/playicanback.svg" class="play-button" alt="" style="border-radius: 20px; width: 20px; right: 6%;">
+          <img src="icon/play-button.svg" class="play-button" alt="">
+          <p class="card-title">${parsedDetail.title}</p>
+          <p class="card-info">${parsedDetail.description}</p>
+        </div>
+      `;
 
       if (resentload) {
-        cardContainerres.innerHTML =
-          cardContainerres.innerHTML +
-          ` <div data-folder="${folder}" class="card">
-                          <img src="song/${folder}/cover.jpeg" alt="top50" class="card-img">
-                          <img src="icon/playicanback.svg" class="play-button" alt="" style="border-radius: 20px; width: 20px; right: 6%;">
-                          <img src="icon/play-button.svg" class="play-button" alt="">
-                          <p class="card-title">${response.title}</p>
-                          <p class="card-info">${response.description}</p>
-                      </div>`;
-
+        cardContainerres.innerHTML += `
+          <div data-folder="${folder}" class="card">
+            <img src="https://raw.githubusercontent.com/KunjGarala/Spotify/main/song/${folder}/cover.jpeg" alt="cover" class="card-img">
+            <img src="icon/playicanback.svg" class="play-button" alt="" style="border-radius: 20px; width: 20px; right: 6%;">
+            <img src="icon/play-button.svg" class="play-button" alt="">
+            <p class="card-title">${parsedDetail.title}</p>
+            <p class="card-info">${parsedDetail.description}</p>
+          </div>
+        `;
         resentload = false;
       }
     }
 
-    //lode play list
+    // Load playlist on card click
     let card = document.querySelectorAll(".card");
     cardContainerres.addEventListener("click", async (event) => {
       const clickedCard = event.target.closest(".card");
-      
       if (clickedCard) {
         const folder = clickedCard.getAttribute("data-folder");
-        // console.log(folder);
-
         await getsong(`song/${folder}`);
-
         PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
       }
     });
@@ -229,35 +224,28 @@ async function displayAlbums() {
     Array.from(card).forEach((e) => {
       e.addEventListener("click", async (item) => {
         let folder = e.getAttribute("data-folder");
-        // console.log(folder);
-        // console.log(e);
         let x = e.cloneNode(true);
-        // console.log(x);
+
         let children = cardContainerres.children;
         let exist = true;
         Array.from(children).forEach((element) => {
-          // console.log(element.getAttribute("data-folder"));
-
           if (element.getAttribute("data-folder") === folder) {
             exist = false;
           }
         });
+
         if (exist) {
           cardContainerres.append(x);
         }
 
         await getsong(`song/${folder}`);
-
         PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
       });
     });
   }
-
-  // console.log(div);
 }
 
 async function main() {
-  
   await getsong(`song/lol`);
   PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
 
