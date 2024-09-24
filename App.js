@@ -13,6 +13,10 @@ let x = document.querySelector("#seekbar");
 let curentfolder;
 let cnt = false;
 
+
+let loading = document.querySelector(".load");
+
+
 let songs = [];
 async function getsong(folder) {
   curentfolder = folder;
@@ -44,7 +48,7 @@ async function getsong(folder) {
     <p class="album-title">${element
       .replaceAll("%20", " ")
       .replaceAll(".mp3", "")}</p>
-    <p class="album-info">Rasraj Ji Maharaj</p>
+    <p class="album-info">Kunj Garala</p>
     </div>
     </div>
     <div class="play-album">
@@ -189,6 +193,7 @@ async function displayAlbums() {
       }
     });
 
+
     // resent played music
     Array.from(card).forEach((e) => {
       e.addEventListener("click", async (item) => {
@@ -214,12 +219,16 @@ async function displayAlbums() {
   }
 }
 
-async function main() {
-  await getsong(`song/lol`);
-  PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
 
-  //display All albums
-  displayAlbums();
+
+async function main() { 
+
+  window.addEventListener("load", async () => {
+    await getsong(`song/lol`);
+    PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
+    displayAlbums();
+    loading.style.display = "none";
+  });
 
   //play and paush
   playButton.addEventListener("click", () => {
