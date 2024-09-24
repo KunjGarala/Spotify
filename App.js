@@ -221,14 +221,16 @@ async function displayAlbums() {
 
 
 
-async function main() { 
 
-  window.addEventListener("load", async () => {
+async function main() { 
+  window.addEventListener("load", async() => {
+
     await getsong(`song/lol`);
     PlayMusic(songs[0].replaceAll("%20", " ").replaceAll(".mp3", ""), true);
     displayAlbums();
+
     loading.style.display = "none";
-  });
+})
 
   //play and paush
   playButton.addEventListener("click", () => {
